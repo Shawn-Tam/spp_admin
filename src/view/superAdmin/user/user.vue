@@ -1,6 +1,5 @@
 <template>
   <div>
-    <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button type="primary" icon="plus" @click="addUser">新增用户</el-button>
@@ -15,24 +14,11 @@
           </template>
         </el-table-column>
         <el-table-column align="left" label="ID" min-width="50" prop="ID" />
-        <el-table-column align="left" label="用户名" min-width="150" prop="userName" />
-        <el-table-column align="left" label="昵称" min-width="150" prop="nickName" />
+        <el-table-column align="left" label="班级" min-width="150" prop="class" />
+        <el-table-column align="left" label="用户名" min-width="150" prop="stuName" />
+        <el-table-column align="left" label="学号" min-width="150" prop="stuNumber" />
         <el-table-column align="left" label="手机号" min-width="180" prop="phone" />
         <el-table-column align="left" label="邮箱" min-width="180" prop="email" />
-        <el-table-column align="left" label="用户角色" min-width="200">
-          <template #default="scope">
-            <el-cascader
-              v-model="scope.row.authorityIds"
-              :options="authOptions"
-              :show-all-levels="false"
-              collapse-tags
-              :props="{ multiple:true,checkStrictly: true,label:'authorityName',value:'authorityId',disabled:'disabled',emitPath:false}"
-              :clearable="false"
-              @visible-change="(flag)=>{changeAuthority(scope.row,flag,0)}"
-              @remove-tag="(removeAuth)=>{changeAuthority(scope.row,false,removeAuth)}"
-            />
-          </template>
-        </el-table-column>
         <el-table-column align="left" label="启用" min-width="150">
           <template #default="scope">
             <el-switch
@@ -44,7 +30,6 @@
             />
           </template>
         </el-table-column>
-
         <el-table-column label="操作" min-width="250" fixed="right">
           <template #default="scope">
             <el-popover v-model="scope.row.visible" placement="top" width="160">
@@ -78,21 +63,24 @@
     <el-dialog
       v-model="addUserDialog"
       custom-class="user-dialog"
-      title="用户"
+      title="学生"
       :show-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
     >
       <div style="height:60vh;overflow:auto;padding:0 12px;">
         <el-form ref="userForm" :rules="rules" :model="userInfo" label-width="80px">
-          <el-form-item v-if="dialogFlag === 'add'" label="用户名" prop="userName">
-            <el-input v-model="userInfo.userName" />
+          <el-form-item v-if="dialogFlag === 'add'" label="用户名" prop="stuName">
+            <el-input v-model="userInfo.stuName" />
+          </el-form-item>
+          <el-form-item v-if="dialogFlag === 'add'" label="班级" prop="class">
+            <el-input v-model="userInfo.class" />
           </el-form-item>
           <el-form-item v-if="dialogFlag === 'add'" label="密码" prop="password">
             <el-input v-model="userInfo.password" />
           </el-form-item>
-          <el-form-item label="昵称" prop="nickName">
-            <el-input v-model="userInfo.nickName" />
+          <el-form-item label="学号" prop="stuNumber">
+            <el-input v-model="userInfo.stuNumber" />
           </el-form-item>
           <el-form-item label="手机号" prop="phone">
             <el-input v-model="userInfo.phone" />
@@ -124,9 +112,7 @@
               <div v-else class="header-img-box">从媒体库选择</div>
             </div>
           </el-form-item>
-
         </el-form>
-
       </div>
 
       <template #footer>
@@ -282,7 +268,7 @@ const deleteUserFunc = async(row) => {
 const userInfo = ref({
   username: '',
   password: '',
-  nickName: '',
+  stuNumber: '',
   headerImg: '',
   authorityId: '',
   authorityIds: [],
@@ -290,7 +276,7 @@ const userInfo = ref({
 })
 
 const rules = ref({
-  userName: [
+  stuName: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 5, message: '最低5位字符', trigger: 'blur' }
   ],
@@ -298,7 +284,7 @@ const rules = ref({
     { required: true, message: '请输入用户密码', trigger: 'blur' },
     { min: 6, message: '最低6位字符', trigger: 'blur' }
   ],
-  nickName: [
+  stuNumber: [
     { required: true, message: '请输入用户昵称', trigger: 'blur' }
   ],
   phone: [
@@ -432,7 +418,7 @@ const switchEnable = async(row) => {
     display: block;
   }
 }
-.nickName{
+.stuNumber{
   display: flex;
   justify-content: flex-start;
   align-items: center;

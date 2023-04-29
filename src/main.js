@@ -14,6 +14,7 @@ import 'element-plus/es/components/loading/style/css'
 import 'element-plus/es/components/notification/style/css'
 import 'element-plus/es/components/message-box/style/css'
 import './style/element_visiable.scss'
+// import ElementPlus from 'element-plus'
 
 initDom()
 /**
@@ -37,6 +38,7 @@ app
   .use(store)
   .use(auth)
   .use(router)
+  // .use(ElementPlus)
   .mount('#app')
 
 export default app
