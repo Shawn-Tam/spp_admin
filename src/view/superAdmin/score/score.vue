@@ -151,8 +151,8 @@
 
 <script setup>
 import { nextTick, ref, watch } from "vue";
-
-const page = ref(1);
+          
+const page = ref(1);                                                                         
 const total = ref(0);
 const pageSize = ref(10);
 const tableData = ref([
