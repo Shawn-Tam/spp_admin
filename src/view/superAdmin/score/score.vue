@@ -16,6 +16,7 @@
         <el-table-column label="操作" min-width="250" fixed="right">
           <template #default="scope">
             <el-button type="primary" link icon="query" @click="openQuery(scope.row)">查询实验列表</el-button>
+            <!-- <el-button type="primary" link icon="query" @click="openQuery(scope.row)">评论</el-button> -->
           </template>
         </el-table-column>
 
