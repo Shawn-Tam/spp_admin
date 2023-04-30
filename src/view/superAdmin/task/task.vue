@@ -87,9 +87,6 @@
           <el-form-item label="作业描述" prop="taskDescription">
             <el-input v-model="taskInfo.taskDescription" />
           </el-form-item>
-          <el-form-item label="作业分数" prop="taskScore">
-            <el-input v-model="taskInfo.taskScore" />
-          </el-form-item>
           <el-form-item label="开始时间" prop="startTime">
             <el-date-picker
               v-model="taskInfo.startTime"

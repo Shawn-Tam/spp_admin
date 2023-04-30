@@ -12,11 +12,11 @@
         <el-table-column align="left" label="作业名称" min-width="150" prop="taskName" />
         <el-table-column align="left" label="得分" min-width="180" prop="score" />
         <el-table-column align="left" label="提交时间" min-width="180" prop="submitTime" />
-
+        <el-table-column align="left" label="教师评语" min-width="180" prop="feedback" />
         <el-table-column label="操作" min-width="250" fixed="right">
           <template #default="scope">
             <el-button type="primary" link icon="query" @click="openQuery(scope.row)">查询实验列表</el-button>
-            <!-- <el-button type="primary" link icon="query" @click="openQuery(scope.row)">评论</el-button> -->
+            <el-button type="primary" link icon="query" @click="feedback(scope.row)">反馈</el-button>
           </template>
         </el-table-column>
 
@@ -47,6 +47,11 @@
           <el-table-column prop="practiceDescription" label="实验描述" min-width="300" />
           <el-table-column prop="code" label="实验代码" min-width="300" />
           <el-table-column prop="score" label="实验分数" min-width="100" />
+          <el-table-column label="操作" min-width="100" fixed="right">
+            <template #default="scope">
+              <el-button type="primary" link icon="query" @click="giveScore(scope.row)">打分</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 
