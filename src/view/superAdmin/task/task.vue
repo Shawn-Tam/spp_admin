@@ -159,9 +159,9 @@ const tableData = ref([
     endTime: '2011-10-10 14:10:18',
     enable: 1,
     practices: [
-      { label: '查询实验', value: '1' },
-      { label: '插入实验', value: '2' },
-      { label: '删除实验', value: '3' },
+      // { label: '查询实验', value: '1' },
+      // { label: '插入实验', value: '2' },
+      // { label: '删除实验', value: '3' },
     ]
   }
 ])
