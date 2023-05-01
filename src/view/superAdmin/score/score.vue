@@ -150,22 +150,24 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from "vue";
-          
-const page = ref(1);                                                                         
+import { nextTick, ref, watch, onMounted } from "vue";
+// getExamUserTaskList
+import { getExamUserTaskList } from "@/api/task.js"
+
+const page = ref(1);
 const total = ref(0);
 const pageSize = ref(10);
 const tableData = ref([
-  {
-    ID: "1",
-    class: "计科192",
-    stuName: "谭少康",
-    stuNumber: "20191514203",
-    taskName: "查询SQL",
-    score: 10,
-    submitTime: "2023-5-10 14:10:18",
-    feedback: "",
-  },
+  // {
+  //   ID: "1",
+  //   class: "计科192",
+  //   stuName: "谭少康",
+  //   stuNumber: "20191514203",
+  //   taskName: "查询SQL",
+  //   score: 10,
+  //   submitTime: "2023-5-10 14:10:18",
+  //   feedback: "",
+  // },
 ]);
 const formData = ref({
   feedback:'',
@@ -213,18 +215,18 @@ const handleCurrentChange = (val) => {
 };
 
 // 查询
-const getTableData = async () => {
-  const table = await getScoreList({
-    page: page.value,
-    pageSize: pageSize.value,
-  });
-  if (table.code === 0) {
-    tableData.value = table.data.list;
-    total.value = table.data.total;
-    page.value = table.data.page;
-    pageSize.value = table.data.pageSize;
-  }
-};
+// const getTableData = async () => {
+//   const table = await getScoreList({
+//     page: page.value,
+//     pageSize: pageSize.value,
+//   });
+//   if (table.code === 0) {
+//     tableData.value = table.data.list;
+//     total.value = table.data.total;
+//     page.value = table.data.page;
+//     pageSize.value = table.data.pageSize;
+//   }
+// };
 // 反馈
 const feedback = (val) => {
   isShowDialogForm.value = true;
@@ -245,11 +247,20 @@ const initPage = async () => {
   getTableData();
 };
 
-initPage();
+
 
 const closeQueryPracticeDialog = () => {
   queryPracticeDialog.value = false;
 };
+const getData = async() => {
+  const result = await getExamUserTaskList()
+  tableData.value = result.data.list
+  // console.log('000000',data)
+}
+onMounted(() => {
+  initPage();
+  getData()
+})
 </script>
 
 <style scoped>

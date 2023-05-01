@@ -289,7 +289,7 @@ const getTableData = async() => {
   }
 }
 
-getTableData()
+// getTableData()
 
 // 新增参数
 const addParameter = (form) => {

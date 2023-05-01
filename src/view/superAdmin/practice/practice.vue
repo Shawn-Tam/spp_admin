@@ -2,46 +2,59 @@
   <div>
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button type="primary" icon="plus" @click="addPractice">新增实验</el-button>
+        <el-button type="primary" icon="plus" @click="addPractice"
+          >新增实验</el-button
+        >
       </div>
-      <el-table
-        :data="tableData"
-        row-key="ID"
-      >
+      <el-table :data="tableData" row-key="ID">
         <el-table-column align="left" label="ID" min-width="50" prop="ID" />
-        <el-table-column align="left" label="实验名称" min-width="150" prop="practiceName" />
-        <el-table-column align="left" label="实验描述" min-width="150" prop="practiceDescription" />
-        <el-table-column align="left" label="实验分数" min-width="180" prop="practiceScore" />
-        <el-table-column align="left" label="开始时间" min-width="180" prop="startTime" />
-        <el-table-column align="left" label="截止时间" min-width="200" prop="endTime" />
-        <el-table-column align="left" label="启用" min-width="150">
-          <template #default="scope">
-            <el-switch
-              v-model="scope.row.enable"
-              inline-prompt
-              :active-value="1"
-              :inactive-value="2"
-              @change="()=>{switchEnable(scope.row)}"
-            />
-          </template>
-        </el-table-column>
+        <el-table-column
+          align="left"
+          label="实验名称"
+          min-width="150"
+          prop="name"
+        />
+        <el-table-column
+          align="left"
+          label="实验描述"
+          min-width="150"
+          prop="description"
+        />
+        <el-table-column
+          align="left"
+          label="实验分数"
+          min-width="180"
+          prop="score"
+        />
 
         <el-table-column label="操作" min-width="250" fixed="right">
           <template #default="scope">
             <el-popover v-model="scope.row.visible" placement="top" width="160">
               <p>确定要删除此实验吗</p>
-              <div style="text-align: right; margin-top: 8px;">
-                <el-button type="primary" link @click="scope.row.visible = false">取消</el-button>
-                <el-button type="primary" @click="deletePracticeFunc(scope.row)">确定</el-button>
+              <div style="text-align: right; margin-top: 8px">
+                <el-button
+                  type="primary"
+                  link
+                  @click="scope.row.visible = false"
+                  >取消</el-button
+                >
+                <el-button type="primary" @click="deletePracticeFunc(scope.row)"
+                  >确定</el-button
+                >
               </div>
               <template #reference>
                 <el-button type="primary" link icon="delete">删除</el-button>
               </template>
             </el-popover>
-            <el-button type="primary" link icon="edit" @click="openEdit(scope.row)">编辑</el-button>
+            <el-button
+              type="primary"
+              link
+              icon="edit"
+              @click="openEdit(scope.row)"
+              >编辑</el-button
+            >
           </template>
         </el-table-column>
-
       </el-table>
       <div class="gva-pagination">
         <el-pagination
@@ -63,49 +76,34 @@
       :close-on-press-escape="false"
       :close-on-click-modal="false"
     >
-      <div style="height:60vh;overflow:auto;padding:0 12px;">
-        <el-form ref="practiceForm" :rules="rules" :model="practiceInfo" label-width="80px">
-          <el-form-item v-if="dialogFlag === 'add'" label="实验名" prop="practiceName">
-            <el-input v-model="practiceInfo.practiceName" />
+      <div style="height: 60vh; overflow: auto; padding: 0 12px">
+        <el-form
+          ref="practiceForm"
+          :rules="rules"
+          :model="practiceInfo"
+          label-width="80px"
+        >
+          <el-form-item
+            label="实验名"
+            prop="practiceName"
+          >
+            <el-input v-model="practiceInfo.name" />
           </el-form-item>
-          <el-form-item label="实验描述" prop="nickName">
-            <el-input v-model="practiceInfo.practiceDescription" />
+          <el-form-item label="实验描述" prop="practiceDescription">
+            <el-input v-model="practiceInfo.description" />
           </el-form-item>
-          <el-form-item label="实验分数" prop="phone">
-            <el-input v-model="practiceInfo.practiceScore" />
+          <el-form-item label="实验分数" prop="practiceScore">
+            <el-input v-model="practiceInfo.score" />
           </el-form-item>
-          <el-form-item label="开始时间" prop="startTime">
-            <el-date-picker
-              v-model="practiceInfo.startTime"
-              type="datetime"
-              placeholder="Pick a Date"
-              format="YYYY/MM/DD HH:mm:ss"
-            />
-          </el-form-item>
-          <el-form-item label="截止时间" prop="endTime">
-            <el-date-picker
-              v-model="practiceInfo.endTime"
-              type="datetime"
-              placeholder="Pick a Date"
-              format="YYYY/MM/DD HH:mm:ss"
-            />
-          </el-form-item>
-          <el-form-item label="启用" prop="disabled">
-            <el-switch
-              v-model="practiceInfo.enable"
-              inline-prompt
-              :active-value="1"
-              :inactive-value="2"
-            />
-          </el-form-item>
-
         </el-form>
       </div>
 
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="closeAddPracticeDialog">取 消</el-button>
-          <el-button type="primary" @click="enterAddPracticeDialog">确 定</el-button>
+          <el-button type="primary" @click="enterAddPracticeDialog"
+            >确 定</el-button
+          >
         </div>
       </template>
     </el-dialog>
@@ -113,75 +111,51 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue'
-import {ElDatePicker} from 'element-plus'
-import CustomPic from '@/components/customPic/index.vue'
-import ChooseImg from '@/components/chooseImg/index.vue'
-import WarningBar from '@/components/warningBar/warningBar.vue'
+import { nextTick, ref, watch, onMounted } from "vue";
+import { ElDatePicker,ElMessage } from "element-plus";
+import CustomPic from "@/components/customPic/index.vue";
+import ChooseImg from "@/components/chooseImg/index.vue";
+import WarningBar from "@/components/warningBar/warningBar.vue";
+import { queryPractice, insertPractice,updatePractice,deletePractice } from "@/api/practice.js";
 
-const page = ref(1)
-const total = ref(0)
-const pageSize = ref(10)
-const tableData = ref([
-  {
-    ID: '1',
-    practiceName: 'SQL查询实验',
-    practiceDescription: '锻炼学生的Select的使用方法',
-    practiceScore: '4',
-    startTime: '2023-4-27 14:10:13',
-    endTime: '2023-5-10 14:10:18',
-    enable: 1,
-  },
-  {
-    ID: '2',
-    practiceName: 'SQL插入实验',
-    practiceDescription: '锻炼学生的Insert的使用方法',
-    practiceScore: '4',
-    startTime: '2023-4-27 14:10:13',
-    endTime: '2023-5-10 14:10:18',
-    enable: 1,
-  },
-  {
-    ID: '3',
-    practiceName: 'SQL删除实验',
-    practiceDescription: '锻炼学生的Delete的使用方法',
-    practiceScore: '4',
-    startTime: '2023-4-27 14:10:13',
-    endTime: '2023-5-10 14:10:18',
-    enable: 1,
-  }
-])
+const page = ref(1);
+const total = ref(0);
+const pageSize = ref(10);
+const tableData = ref([]);
 
-const practiceForm = ref({})
+const practiceForm = ref({});
 
 const practiceInfo = ref({
-  ID: '',
-  practiceName: '',
-  practiceDescription: '',
-  practiceScore: '',
-  startTime: '',
-  endTime: '',
-  enable: 1,
-})
+  name: "",
+  description: "",
+  score: "",
+});
+
+
+onMounted(() => {
+  getTableData();
+});
+
 const openEdit = (row) => {
-  dialogFlag.value = 'edit'
-  practiceInfo.value = JSON.parse(JSON.stringify(row))
-  addPracticeDialog.value = true
-}
+  dialogFlag.value = "edit";
+  practiceInfo.value = JSON.parse(JSON.stringify(row));
+  addPracticeDialog.value = true;
+};
 // 分页
 const handleSizeChange = (val) => {
-  pageSize.value = val
-  getTableData()
-}
+  pageSize.value = val;
+  getTableData();
+};
 
 const handleCurrentChange = (val) => {
-  page.value = val
-  getTableData()
-}
+  page.value = val;
+  getTableData();
+};
 
-// 查询
+// 获取实验列表
 const getTableData = async() => {
-  const table = await getPracticeList({ page: page.value, pageSize: pageSize.value })
+  const table = await queryPractice({ page: page.value, pageSize: pageSize.value })
+  console.log('table',table)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -190,82 +164,73 @@ const getTableData = async() => {
   }
 }
 
-watch(() => tableData.value, () => {
-  setAuthorityIds()
-})
-
-const initPage = async() => {
-  getTableData()
-  const res = await getAuthorityList({ page: 1, pageSize: 999 })
-  setOptions(res.data.list)
-}
-
-initPage()
-const deletePracticeFunc = async(row) => {
-  const res = await deletePractice({ id: row.ID })
+const deletePracticeFunc = async (row) => {
+  console.log('deletePracticeFunc',row)
+  const res = await deletePractice({ practiceId: row.ID });
+  console.log('resresres',res);
   if (res.code === 0) {
-    ElMessage.success('删除成功')
-    row.visible = false
-    await getTableData()
+    ElMessage.success("删除成功");
+    row.visible = false;
+    await getTableData();
   }
-}
-const enterAddPracticeDialog = async() => {
-  practiceInfo.value.authorityId = practiceInfo.value.authorityIds[0]
-  practiceForm.value.validate(async valid => {
+};
+// 新增
+const enterAddPracticeDialog = async () => {
+  practiceForm.value.validate(async (valid) => {
     if (valid) {
-      const req = {
-        ...practiceInfo.value
-      }
-      if (dialogFlag.value === 'add') {
-        const res = await register(req)
-        if (res.code === 0) {
-          ElMessage({ type: 'success', message: '创建成功' })
-          await getTableData()
-          closeAddPracticeDialog()
+      let query = {
+          description: practiceInfo.description,
+          name: practiceInfo.name,
+          score: practiceInfo.score,
+        };
+      if (dialogFlag.value === "add") {
+        const result = await insertPractice(query);
+        if (result.code === 0) {
+          ElMessage({ type: "success", message: "创建成功" });
+          await getTableData();
+          closeAddPracticeDialog();
         }
       }
-      if (dialogFlag.value === 'edit') {
-        const res = await setPracticeInfo(req)
-        if (res.code === 0) {
-          ElMessage({ type: 'success', message: '编辑成功' })
-          await getTableData()
-          closeAddPracticeDialog()
+      if (dialogFlag.value === "edit") {
+        const result = await updatePractice(query);
+        if (result.code === 0) {
+          ElMessage({ type: "success", message: "编辑成功" });
+          await getTableData();
+          closeAddPracticeDialog();
         }
       }
     }
-  })
-}
+  });
+};
 
-const addPracticeDialog = ref(false)
+const addPracticeDialog = ref(false);
 const closeAddPracticeDialog = () => {
-  practiceForm.value.resetFields()
-  practiceInfo.value.headerImg = ''
-  practiceInfo.value.authorityIds = []
-  addPracticeDialog.value = false
-}
+  practiceForm.value.resetFields();
+  addPracticeDialog.value = false;
+};
 
-const dialogFlag = ref('add')
+const dialogFlag = ref("add");
 
+// 新增
 const addPractice = () => {
-  dialogFlag.value = 'add'
-  addPracticeDialog.value = true
-}
-const switchEnable = async(row) => {
-  practiceInfo.value = JSON.parse(JSON.stringify(row))
-  await nextTick()
+  dialogFlag.value = "add";
+  addPracticeDialog.value = true;
+};
+const switchEnable = async (row) => {
+  practiceInfo.value = JSON.parse(JSON.stringify(row));
+  await nextTick();
   const req = {
-    ...practiceInfo.value
-  }
-  const res = await setPracticeInfo(req)
+    ...practiceInfo.value,
+  };
+  const res = await setPracticeInfo(req);
   if (res.code === 0) {
-    ElMessage({ type: 'success', message: `${req.enable === 2 ? '禁用' : '启用'}成功` })
-    await getTableData()
-    practiceInfo.value.headerImg = ''
-    practiceInfo.value.authorityIds = []
+    ElMessage({
+      type: "success",
+      message: `${req.enable === 2 ? "禁用" : "启用"}成功`,
+    });
+    await getTableData();
   }
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

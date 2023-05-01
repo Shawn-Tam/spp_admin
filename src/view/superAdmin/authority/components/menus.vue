@@ -113,7 +113,7 @@ const init = async() => {
   menuTreeIds.value = arr
 }
 
-init()
+// init()
 
 const setDefault = async(data) => {
   const res = await updateAuthority({ authorityId: props.row.authorityId, AuthorityName: props.row.authorityName, parentId: props.row.parentId, defaultRouter: data.name })
