@@ -137,6 +137,7 @@ onMounted(() => {
 });
 
 const openEdit = (row) => {
+  console.log('111',row)
   dialogFlag.value = "edit";
   practiceInfo.value = JSON.parse(JSON.stringify(row));
   addPracticeDialog.value = true;
@@ -178,12 +179,13 @@ const deletePracticeFunc = async (row) => {
 const enterAddPracticeDialog = async () => {
   practiceForm.value.validate(async (valid) => {
     if (valid) {
-      let query = {
-          description: practiceInfo.description,
-          name: practiceInfo.name,
-          score: practiceInfo.score,
-        };
       if (dialogFlag.value === "add") {
+        let query = {
+          description: practiceInfo.value.description,
+          name: practiceInfo.value.name,
+          score: Number(practiceInfo.value.score),
+        };
+        console.log('88888',query)
         const result = await insertPractice(query);
         if (result.code === 0) {
           ElMessage({ type: "success", message: "创建成功" });
@@ -192,6 +194,13 @@ const enterAddPracticeDialog = async () => {
         }
       }
       if (dialogFlag.value === "edit") {
+        let query = {
+          description: practiceInfo.value.description,
+          name: practiceInfo.value.name,
+          score: Number(practiceInfo.value.score),
+          practiceId: Number(practiceInfo.value.ID)
+        };
+        console.log('9999',practiceInfo.value)
         const result = await updatePractice(query);
         if (result.code === 0) {
           ElMessage({ type: "success", message: "编辑成功" });

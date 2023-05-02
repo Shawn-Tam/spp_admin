@@ -12,19 +12,19 @@
           align="left"
           label="作业名称"
           min-width="150"
-          prop="taskName"
+          prop="name"
         />
         <el-table-column
           align="left"
           label="作业描述"
           min-width="150"
-          prop="taskDescription"
+          prop="description"
         />
         <el-table-column
           align="left"
           label="作业分数"
           min-width="180"
-          prop="taskScore"
+          prop="score"
         />
         <el-table-column
           align="left"
@@ -53,9 +53,9 @@
           >
             <el-option
               v-for="practice in practices"
-              :key="practice.value"
+              :key="practice.name"
               :label="practice.label"
-              :value="practice.value"
+              :value="practice.name"
             />
           </el-select>
         </el-table-column>
@@ -66,7 +66,7 @@
               inline-prompt
               :active-value="1"
               :inactive-value="2"
-              @change="
+              @click="
                 () => {
                   switchEnable(scope.row);
                 }
@@ -162,7 +162,7 @@
               v-model="taskInfo.publish"
               inline-prompt
               :active-value="1"
-              :inactive-value="2"
+              :inactive-value="0"
             />
           </el-form-item>
           <el-form-item label="选择实验" prop="practices">
@@ -174,9 +174,9 @@
             >
               <el-option
                 v-for="practice in practices"
-                :key="practice.value"
-                :label="practice.label"
-                :value="practice.value"
+                :key="practice.ID"
+                :label="practice.name"
+                :value="practice.ID"
               />
             </el-select>
           </el-form-item>
@@ -198,24 +198,13 @@
 <script setup>
 import { nextTick, ref, watch, onMounted } from "vue";
 import { ElDatePicker,ElMessage } from "element-plus";
-import { getExamTaskList, createExamTask, deleteExamTask,updateTask} from "@/api/task.js";
-import {queryPracticeById} from "@/api/practice.js"
+import { getExamTaskList, createExamTask, deleteExamTask,updateTask,publishExamTask} from "@/api/task.js";
+import {queryPracticeById ,queryPractice} from "@/api/practice.js"
 
 const page = ref(1);
 const total = ref(0);
 const pageSize = ref(10);
-const tableData = ref([
-  {
-    ID: "1",
-    taskName: "查询SQL",
-    taskDescription: "锻炼学生的Select的使用方法",
-    taskScore: "12",
-    startTime: "2011-10-10 14:10:13",
-    endTime: "2011-10-10 14:10:18",
-    publish: 1,
-    practices: [],
-  },
-]);
+const tableData = ref([]);
 
 const taskForm = ref({});
 
@@ -223,27 +212,24 @@ const taskInfo = ref({
   ID: "",
   name: "",
   description: "",
-  score: "",
+  score: 0,
   startTime: "",
   endTime: "",
-  publish: 1,
+  publish: 0,
   practices: [],
 });
 
-const practices = ref([
-  { label: "查询实验", value: "1" },
-  { label: "插入实验", value: "2" },
-  { label: "删除实验", value: "3" },
-]);
+const practices = ref([]);
 
 onMounted(() => {
   getTableData();
 });
-const openEdit = (row) => {
+const openEdit = async(row) => {
   dialogFlag.value = "edit";
   taskInfo.value = JSON.parse(JSON.stringify(row));
   addTaskDialog.value = true;
-  getPracticeList()
+  const result = await queryPracticeById(row.ID)
+  practices.value = result.data.list
 };
 // 分页
 const handleSizeChange = (val) => {
@@ -269,12 +255,6 @@ const getTableData = async () => {
     pageSize.value = table.data.pageSize;
   }
 };
-// 获取关联实验列表
-const getPracticeList = async () => {
-  // let taskId = ''
-  const result = await queryPracticeById()
-  console.log('getPracticeList',result)
-}
 
 const deleteTaskFunc = async (row) => {
   const res = await deleteExamTask({ taskId: Number(row.ID) });
@@ -288,13 +268,13 @@ const enterAddTaskDialog = async () => {
   taskForm.value.validate(async (valid) => {
     if (valid) {
       let query = {
-        description: taskInfo.description,
-        end_time: taskInfo.endTime,
-        name: taskInfo.name,
-        practiceIds: [0],
-        publish: taskInfo.publish,
-        score: taskInfo.score,
-        start_time: taskInfo.startTime,
+        description: taskInfo.value.description,
+        end_time: taskInfo.value.endTime,
+        name: taskInfo.value.name,
+        practiceIds: taskInfo.value.practices,
+        publish: Boolean(taskInfo.value.publish),
+        score: Number(taskInfo.value.score),
+        start_time: taskInfo.value.startTime,
       };
       if (dialogFlag.value === "add") {
         const res = await createExamTask(query);
@@ -319,33 +299,31 @@ const enterAddTaskDialog = async () => {
 const addTaskDialog = ref(false);
 const closeAddTaskDialog = () => {
   taskForm.value.resetFields();
-  taskInfo.value.headerImg = "";
-  taskInfo.value.authorityIds = [];
   addTaskDialog.value = false;
 };
 
 const dialogFlag = ref("add");
 
-const addTask = () => {
+const addTask = async() => {
   dialogFlag.value = "add";
   addTaskDialog.value = true;
-  getPracticeList()
+  const result = await queryPractice()
+  practices.value = result.data.list
 };
 const switchEnable = async (row) => {
   taskInfo.value = JSON.parse(JSON.stringify(row));
   await nextTick();
   const req = {
-    ...taskInfo.value,
+    taskId: taskInfo.value.ID,
   };
-  const res = await setTaskInfo(req);
+  console.log('publishExamTask',req)
+  const res = await publishExamTask(req);
   if (res.code === 0) {
     ElMessage({
       type: "success",
-      message: `${req.enable === 2 ? "禁用" : "启用"}成功`,
+      message: "启用成功",
     });
     await getTableData();
-    taskInfo.value.headerImg = "";
-    taskInfo.value.authorityIds = [];
   }
 };
 </script>

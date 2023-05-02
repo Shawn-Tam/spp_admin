@@ -43,7 +43,7 @@ export const getExamUserTaskList = (data) => {
 export const publishExamTask = (data) => {
     return service({
         url: '/examTask/publishExamTask',
-        method: 'get',
+        method: 'post',
         data: data
     })
 }

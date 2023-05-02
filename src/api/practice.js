@@ -40,16 +40,17 @@ export const queryPractice = () => {
     })
 }
 //更新实验列表
-export const updatePractice = () => {
+export const updatePractice = (data) => {
     return service({
         url: '/examPractice/updatePractice',
-        method: 'post'
+        method: 'post',
+        data: data
     })
 }
 // 获取作业的ExamPractice列表
-export const queryPracticeById = () => {
+export const queryPracticeById = (data) => {
     return service({
-        url: 'examPractice/queryPracticeById',
+        url: 'examPractice/queryPracticeById?taskId='+data,
         method: 'get',
     })
 }

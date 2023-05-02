@@ -178,26 +178,7 @@ const queryPracticeDialog = ref(false);
 const isShowDialogForm = ref(false);
 const dialogType = ref('feedback')
 const formLabelWidth = "120px";
-const practicesScore = ref([
-  {
-    practiceName: "查询SQL",
-    practiceDescription: "写一个sql代码, 查询user表",
-    code: "select * from users",
-    score: 4,
-  },
-  {
-    practiceName: "插入SQL",
-    practiceDescription: "写一个sql代码, 查询user表",
-    code: "insert * from users",
-    score: 0,
-  },
-  {
-    practiceName: "删除SQL",
-    practiceDescription: "写一个sql代码, 查询user表",
-    code: "delete * from users",
-    score: 4,
-  },
-]);
+const practicesScore = ref([]);
 const openQuery = (row) => {
   dialogFlag.value = "query";
   // practicesScore.value = JSON.parse(JSON.stringify(row))
@@ -215,18 +196,18 @@ const handleCurrentChange = (val) => {
 };
 
 // 查询
-// const getTableData = async () => {
-//   const table = await getScoreList({
-//     page: page.value,
-//     pageSize: pageSize.value,
-//   });
-//   if (table.code === 0) {
-//     tableData.value = table.data.list;
-//     total.value = table.data.total;
-//     page.value = table.data.page;
-//     pageSize.value = table.data.pageSize;
-//   }
-// };
+const getTableData = async () => {
+  const table = await getExamUserTaskList({
+    page: page.value,
+    pageSize: pageSize.value,
+  });
+  if (table.code === 0) {
+    tableData.value = table.data.list;
+    total.value = table.data.total;
+    page.value = table.data.page;
+    pageSize.value = table.data.pageSize;
+  }
+};
 // 反馈
 const feedback = (val) => {
   isShowDialogForm.value = true;
@@ -243,23 +224,12 @@ const giveScore = (val) => {
   console.log('giveScore',val)
 }
 
-const initPage = async () => {
-  getTableData();
-};
-
-
-
 const closeQueryPracticeDialog = () => {
   queryPracticeDialog.value = false;
 };
-const getData = async() => {
-  const result = await getExamUserTaskList()
-  tableData.value = result.data.list
-  // console.log('000000',data)
-}
-onMounted(() => {
-  initPage();
-  getData()
+
+onMounted(() => {;
+  getTableData()
 })
 </script>
 
