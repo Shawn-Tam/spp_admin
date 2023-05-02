@@ -34,7 +34,7 @@ export const getExamTaskList = () => {
 // 根据用户id获取作业列表 获取成绩管理数据
 export const getExamUserTaskList = (data) => {
     return service({
-        url: '/examTask/getExamUserTaskList',
+        url: `/examTask/getExamUserTaskList?page=${data.page}&pageSize=${data.pageSize}`,
         method: 'get',
         data: data
     })
@@ -47,7 +47,7 @@ export const publishExamTask = (data) => {
         data: data
     })
 }
-// 提交分数
+// 评语
 export const taskFeedback = (data) => {
     return service({
         url: '/examTask/taskFeedback',

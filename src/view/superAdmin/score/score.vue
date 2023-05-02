@@ -86,13 +86,9 @@
     >
       <div style="height: 60vh; overflow: auto; padding: 0 12px">
         <el-table :data="practicesScore" style="width: 100%" stripe>
+          <el-table-column prop="name" label="实验名称" min-width="100" />
           <el-table-column
-            prop="practiceName"
-            label="实验名称"
-            min-width="100"
-          />
-          <el-table-column
-            prop="practiceDescription"
+            prop="description"
             label="实验描述"
             min-width="300"
           />
@@ -119,7 +115,11 @@
       </template>
     </el-dialog>
     <!-- 弹窗 -->
-    <el-dialog :title="dialogType === 'feedback' ? '教室评语' : '打分'" v-model="isShowDialogForm" class="feedback-box">
+    <el-dialog
+      :title="dialogType === 'feedback' ? '教室评语' : '打分'"
+      v-model="isShowDialogForm"
+      class="feedback-box"
+    >
       <el-form :model="formData" v-if="dialogType === 'feedback'">
         <el-form-item label="教室评语" :label-width="formLabelWidth">
           <el-input
@@ -133,11 +133,8 @@
       </el-form>
       <el-form :model="formData" v-if="dialogType === 'giveScore'">
         <el-form-item label="分数" :label-width="formLabelWidth">
-          <el-input
-            v-model="formData.score"
-            autocomplete="off"
-          >
-          <template #append>分</template>
+          <el-input v-model="formData.score" autocomplete="off">
+            <template #append>分</template>
           </el-input>
         </el-form-item>
       </el-form>
@@ -152,7 +149,13 @@
 <script setup>
 import { nextTick, ref, watch, onMounted } from "vue";
 // getExamUserTaskList
-import { getExamUserTaskList } from "@/api/task.js"
+import {
+  getExamUserTaskList,
+  taskFeedback,
+  getExamTaskList,
+} from "@/api/task.js";
+import { queryPracticeById, practiceFeedback } from "@/api/practice.js";
+import { ElMessage } from "element-plus";
 
 const page = ref(1);
 const total = ref(0);
@@ -170,19 +173,28 @@ const tableData = ref([
   // },
 ]);
 const formData = ref({
-  feedback:'',
+  feedback: "",
   score: 0,
-})
+});
 const dialogFlag = ref("query");
 const queryPracticeDialog = ref(false);
 const isShowDialogForm = ref(false);
-const dialogType = ref('feedback')
+const dialogType = ref("feedback");
 const formLabelWidth = "120px";
 const practicesScore = ref([]);
-const openQuery = (row) => {
+let openQueryRowInfo = ref({})
+const openQuery = async (row) => {
+  openQueryRowInfo.value = row
   dialogFlag.value = "query";
-  // practicesScore.value = JSON.parse(JSON.stringify(row))
   queryPracticeDialog.value = true;
+  getQueryPracticeList(row)
+};
+// 获取实验
+const getQueryPracticeList = async (row) => {
+  const result = await queryPracticeById(row.taskId);
+  if (result.code === 0) {
+    practicesScore.value = result.data.list;
+  }
 };
 // 分页
 const handleSizeChange = (val) => {
@@ -208,29 +220,57 @@ const getTableData = async () => {
     pageSize.value = table.data.pageSize;
   }
 };
+let rowInfo = ref({});
 // 反馈
 const feedback = (val) => {
+  console.log("11111", val);
+  rowInfo.value = val;
   isShowDialogForm.value = true;
-  dialogType.value = 'feedback'
+  dialogType.value = "feedback";
 };
-const submit = () => {
+const submit = async () => {
   isShowDialogForm.value = false;
   // 调接口
+  if (dialogType.value === "feedback") {
+    let query = {
+      taskId: rowInfo.value.taskId,
+      comment: formData.value.feedback,
+    };
+    const result = await taskFeedback(query);
+    if (result.code === 0) {
+      ElMessage({ type: "success", message: "反馈成功" });
+    } else {
+      ElMessage({ type: "success", message: "反馈失败" });
+    }
+  } else if (dialogType.value === "giveScore") {
+    let query = {
+      taskId: rowInfo.value.taskId,
+      score: Number(formData.value.score),
+    };
+    const result = await practiceFeedback(query);
+    console.log("result", result);
+    if (result.code === 0) {
+      ElMessage({ type: "success", message: "打分成功" });
+      getQueryPracticeList(openQueryRowInfo.value)
+    } else {
+      ElMessage({ type: "success", message: "打分失败" });
+    }
+  }
 };
 // 打分
 const giveScore = (val) => {
-  dialogType.value = 'giveScore'
-  isShowDialogForm.value = true
-  console.log('giveScore',val)
-}
+  dialogType.value = "giveScore";
+  isShowDialogForm.value = true;
+  console.log("giveScore", val);
+};
 
 const closeQueryPracticeDialog = () => {
   queryPracticeDialog.value = false;
 };
 
-onMounted(() => {;
-  getTableData()
-})
+onMounted(() => {
+  getTableData();
+});
 </script>
 
 <style scoped>

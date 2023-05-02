@@ -16,7 +16,7 @@ export const insertPractice = (data) => {
         data: data
     })
 }
-// 教师反馈
+// 给实验打分
 export const practiceFeedback = (data) => {
     return service({
         url: '/examPractice/practiceFeedback',
