@@ -63,3 +63,11 @@ export const updateTask = (data) => {
         data: data
     })
 }
+// 分数
+export const submitTaskScore = (data) => {
+    return service({
+        url: '/examTask/submitTaskScore',
+        method: 'post',
+        data: data
+    })
+}

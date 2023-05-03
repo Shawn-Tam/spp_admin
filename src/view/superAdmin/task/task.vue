@@ -54,7 +54,7 @@
             <el-option
               v-for="practice in practices"
               :key="practice.name"
-              :label="practice.label"
+              :label="practice.name"
               :value="practice.name"
             />
           </el-select>
@@ -131,11 +131,7 @@
           :model="taskInfo"
           label-width="80px"
         >
-          <el-form-item
-            v-if="dialogFlag === 'add'"
-            label="作业名"
-            prop="name"
-          >
+          <el-form-item v-if="dialogFlag === 'add'" label="作业名" prop="name">
             <el-input v-model="taskInfo.name" />
           </el-form-item>
           <el-form-item label="作业描述" prop="description">
@@ -171,12 +167,13 @@
               multiple
               placeholder="选择实验"
               style="width: 240px"
+              @change="getSelectPrac()"
             >
               <el-option
                 v-for="practice in practices"
-                :key="practice.ID"
+                :key="practice.name"
                 :label="practice.name"
-                :value="practice.ID"
+                :value="practice.name"
               />
             </el-select>
           </el-form-item>
@@ -197,9 +194,16 @@
 
 <script setup>
 import { nextTick, ref, watch, onMounted } from "vue";
-import { ElDatePicker,ElMessage } from "element-plus";
-import { getExamTaskList, createExamTask, deleteExamTask,updateTask,publishExamTask} from "@/api/task.js";
-import {queryPracticeById ,queryPractice} from "@/api/practice.js"
+import { ElDatePicker, ElMessage } from "element-plus";
+import {
+  getExamTaskList,
+  createExamTask,
+  deleteExamTask,
+  updateTask,
+  publishExamTask,
+  submitTaskScore,
+} from "@/api/task.js";
+import { queryPracticeById, queryPractice } from "@/api/practice.js";
 
 const page = ref(1);
 const total = ref(0);
@@ -224,12 +228,12 @@ const practices = ref([]);
 onMounted(() => {
   getTableData();
 });
-const openEdit = async(row) => {
+const openEdit = async (row) => {
   dialogFlag.value = "edit";
   taskInfo.value = JSON.parse(JSON.stringify(row));
   addTaskDialog.value = true;
-  const result = await queryPracticeById(row.ID)
-  practices.value = result.data.list
+  const result = await queryPractice();
+  practices.value = result.data.list;
 };
 // 分页
 const handleSizeChange = (val) => {
@@ -267,6 +271,7 @@ const deleteTaskFunc = async (row) => {
 const enterAddTaskDialog = async () => {
   taskForm.value.validate(async (valid) => {
     if (valid) {
+      console.log("taskInfo",taskInfo.value)
       let query = {
         description: taskInfo.value.description,
         end_time: taskInfo.value.endTime,
@@ -281,6 +286,7 @@ const enterAddTaskDialog = async () => {
         if (res.code === 0) {
           ElMessage({ type: "success", message: "创建成功" });
           await getTableData();
+          postScore(taskInfo.value)
           closeAddTaskDialog();
         }
       }
@@ -289,13 +295,23 @@ const enterAddTaskDialog = async () => {
         if (res.code === 0) {
           ElMessage({ type: "success", message: "编辑成功" });
           await getTableData();
+          postScore(taskInfo.value)
           closeAddTaskDialog();
         }
       }
     }
   });
 };
-
+const postScore = async (val) => {
+  let query = {
+    score: "string",
+    taskId: Number(val.ID),
+  };
+  // const result = await submitTaskScore(query);
+};
+const getSelectPrac = (val) => {
+  console.log('val',val)
+}
 const addTaskDialog = ref(false);
 const closeAddTaskDialog = () => {
   taskForm.value.resetFields();
@@ -304,11 +320,11 @@ const closeAddTaskDialog = () => {
 
 const dialogFlag = ref("add");
 
-const addTask = async() => {
+const addTask = async () => {
   dialogFlag.value = "add";
   addTaskDialog.value = true;
-  const result = await queryPractice()
-  practices.value = result.data.list
+  const result = await queryPractice();
+  practices.value = result.data.list;
 };
 const switchEnable = async (row) => {
   taskInfo.value = JSON.parse(JSON.stringify(row));
@@ -316,14 +332,14 @@ const switchEnable = async (row) => {
   const req = {
     taskId: taskInfo.value.ID,
   };
-  console.log('publishExamTask',req)
+  console.log("publishExamTask", req);
   const res = await publishExamTask(req);
   if (res.code === 0) {
     ElMessage({
       type: "success",
       message: "启用成功",
     });
-    await getTableData();
+    // await getTableData();
   }
 };
 </script>

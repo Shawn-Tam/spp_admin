@@ -37,7 +37,7 @@
           align="left"
           label="提交时间"
           min-width="180"
-          prop="submitTime"
+          prop="CreatedAt"
         />
         <el-table-column
           align="left"
@@ -111,6 +111,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="closeQueryPracticeDialog">关 闭</el-button>
+          <el-button type="primary" @click="addQueryPracticeDialog">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -239,6 +240,7 @@ const submit = async () => {
     const result = await taskFeedback(query);
     if (result.code === 0) {
       ElMessage({ type: "success", message: "反馈成功" });
+      getTableData()
     } else {
       ElMessage({ type: "success", message: "反馈失败" });
     }
@@ -252,6 +254,7 @@ const submit = async () => {
     if (result.code === 0) {
       ElMessage({ type: "success", message: "打分成功" });
       getQueryPracticeList(openQueryRowInfo.value)
+      getTableData()
     } else {
       ElMessage({ type: "success", message: "打分失败" });
     }
@@ -267,6 +270,9 @@ const giveScore = (val) => {
 const closeQueryPracticeDialog = () => {
   queryPracticeDialog.value = false;
 };
+const addQueryPracticeDialog = () => {
+  queryPracticeDialog.value = false;
+}
 
 onMounted(() => {
   getTableData();
